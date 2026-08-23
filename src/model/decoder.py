@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple, Optional, List
 
 class VisualMapperLayer(nn.Module):
     """
