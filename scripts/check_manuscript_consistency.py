@@ -3,6 +3,13 @@ import sys
 import re
 import json
 
+# Ensure src module and project files are importable from anywhere
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+if os.getcwd() not in sys.path:
+    sys.path.insert(0, os.getcwd())
+
 def check_manuscript_consistency(
     manuscript_path: str = "manuscript/manuscript.md",
     summary_path: str = "outputs/results_summary.json",

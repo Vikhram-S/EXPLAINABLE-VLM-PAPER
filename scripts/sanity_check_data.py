@@ -6,8 +6,12 @@ import matplotlib.patches as patches
 import torch
 import numpy as np
 
-# Ensure src module is importable
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+# Ensure src module is importable from anywhere
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+if os.getcwd() not in sys.path:
+    sys.path.insert(0, os.getcwd())
 
 from src.data.iu_xray import IUXrayDataModule
 from src.data.dataset import CHEXPERT_PATHOLOGIES
