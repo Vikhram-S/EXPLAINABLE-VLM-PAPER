@@ -113,7 +113,10 @@ def train_pipeline(config_path: str):
         lr=float(cfg["training"]["learning_rate"]),
         weight_decay=float(cfg["training"].get("weight_decay", 0.01)),
     )
-    scaler = GradScaler(enabled=cfg["training"].get("fp16", True) and device.type == "cuda")
+    try:
+        scaler = torch.amp.GradScaler('cuda', enabled=cfg["training"].get("fp16", True) and device.type == "cuda")
+    except Exception:
+        scaler = GradScaler(enabled=cfg["training"].get("fp16", True) and device.type == "cuda")
 
     output_dir = cfg["training"]["output_dir"]
     if not os.path.exists(output_dir):
@@ -159,7 +162,12 @@ def train_pipeline(config_path: str):
             bbox_masks = batch["bbox_mask"].to(device)
             has_bbox_flags = batch["has_bbox"].to(device)
 
-            with autocast(enabled=cfg["training"].get("fp16", True) and device.type == "cuda"):
+            try:
+                autocast_ctx = torch.amp.autocast('cuda', enabled=cfg["training"].get("fp16", True) and device.type == "cuda")
+            except Exception:
+                autocast_ctx = autocast(enabled=cfg["training"].get("fp16", True) and device.type == "cuda")
+
+            with autocast_ctx:
                 outputs = model(
                     images=images,
                     input_ids=input_ids,
