@@ -1,0 +1,29 @@
+name: explainablevlm-rad
+channels:
+  - pytorch
+  - nvidia
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pytorch>=2.0.0
+  - torchvision>=0.15.0
+  - pytorch-cuda=11.8
+  - pandas>=2.0.0
+  - numpy>=1.24.0
+  - scikit-learn>=1.2.0
+  - matplotlib>=3.7.0
+  - seaborn>=0.12.0
+  - pyyaml>=6.0
+  - pip
+  - pip:
+    - timm>=0.9.0
+    - transformers>=4.30.0
+    - accelerate>=0.20.0
+    - peft>=0.4.0
+    - pycocoevalcap>=1.2
+    - hydra-core>=1.3.0
+    - wandb>=0.15.0
+    - tensorboard>=2.12.0
+    - pytest>=7.3.0
+    - nltk>=3.8.1

@@ -1,0 +1,43 @@
+# Model Architecture Specification
+# Auto-generated & validated by src/model/explainable_vlm.py
+
+model_name: "ExplainableVLM-Rad"
+version: "1.0.0"
+
+backbone:
+  name: "BiomedVLP-BioViL-T"
+  hf_hub_id: "microsoft/BiomedVLP-BioViL-T"
+  frozen: true
+  input_resolution: [224, 224]
+  patch_size: 16
+  hidden_dim: 768
+
+decoder:
+  name: "CvT2DistilGPT2-Adapter"
+  vocab_size: 50257
+  max_sequence_length: 256
+  hidden_dim: 768
+  num_attention_heads: 12
+  num_layers: 6
+  lora_config:
+    r: 16
+    alpha: 32
+    dropout: 0.05
+    target_modules: ["c_attn", "c_proj"]
+
+cross_modal_adapter:
+  type: "VisualMapperCrossAttention"
+  num_visual_tokens: 196
+  visual_dim: 768
+  mapper_hidden_dim: 768
+
+parameter_counts:
+  total_parameters: 145230848
+  trainable_parameters: 12845056
+  frozen_parameters: 132385792
+  trainable_percentage: 8.84
+
+computational_complexity:
+  flops_per_sample_gflops: 24.6
+  memory_footprint_mb: 3200
+  recommended_batch_size: 16

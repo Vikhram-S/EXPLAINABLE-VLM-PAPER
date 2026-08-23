@@ -1,0 +1,34 @@
+# Stage 2 Experiment Config: MIMIC-CXR Fine-Tuning
+experiment_name: "stage2_mimic_cxr"
+stage: 2
+dataset_name: "mimic_cxr"
+pretrained_stage1_checkpoint: "outputs/checkpoints/stage1_iu_xray/best_checkpoint.pt"
+seed: 42
+
+training:
+  epochs: 10
+  batch_size: 16
+  gradient_accumulation_steps: 4
+  learning_rate: 1.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  fp16: true
+  checkpoint_interval_steps: 250
+  early_stopping_patience: 3
+  output_dir: "outputs/checkpoints/stage2_mimic_cxr"
+
+loss_weights:
+  lambda_ce: 1.0
+  lambda_align: 0.2
+  lambda_exp: 0.3
+
+data:
+  image_size: 224
+  max_text_len: 256
+  subsample_size: 30000
+  stratify_pathologies: true
+
+model:
+  backbone: "microsoft/BiomedVLP-BioViL-T"
+  lora_r: 16
+  lora_alpha: 32

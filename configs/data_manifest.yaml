@@ -1,0 +1,57 @@
+tier1:
+  iu_xray:
+    active_splits:
+      patient_level_split_verified: true
+      seed: 42
+      test_samples: 80
+      total_samples: 400
+      train_samples: 280
+      val_samples: 40
+    dataset_name: IU X-Ray (Open-i)
+    seed: 42
+    source_url: https://openi.nlm.nih.gov/
+    split_strategy: patient_level
+    status: active
+    test_ratio: 0.2
+    total_images: 7470
+    total_studies: 3955
+    train_ratio: 0.7
+    val_ratio: 0.1
+  nih_chestxray14:
+    dataset_name: NIH ChestX-ray14
+    status: auxiliary_classification_only
+    total_images: 112120
+    total_patients: 30805
+tier2:
+  mimic_cxr:
+    dataset_name: MIMIC-CXR-JPG v2.0.0
+    source: PhysioNet Restricted Access
+    split_strategy: patient_level
+    status: stage2_target
+    stratification_keys:
+    - Atelectasis
+    - Cardiomegaly
+    - Consolidation
+    - Edema
+    - Enlarged Cardiomediastinum
+    - Fracture
+    - Lung Lesion
+    - Lung Opacity
+    - Pleural Effusion
+    - Pleural Other
+    - Pneumonia
+    - Pneumothorax
+    - Support Devices
+    - No Finding
+    stratified_subsample_size: 30000
+    total_images: 377110
+  ms_cxr:
+    annotation_type: radiologist_phrase_grounding
+    dataset_name: MS-CXR v1.0.0
+    status: ground_truth_explainability_val
+    total_bounding_boxes: 1162
+tier3:
+  chexpert_plus:
+    dataset_name: CheXpert Plus
+    status: auxiliary_radgraph
+    total_studies: 187711

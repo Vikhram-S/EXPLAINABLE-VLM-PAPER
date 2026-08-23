@@ -1,0 +1,34 @@
+# Stage 1 Experiment Config: Fast-iteration debugging on IU X-Ray
+experiment_name: "stage1_iu_xray"
+stage: 1
+dataset_name: "iu_xray"
+seed: 42
+
+training:
+  epochs: 15
+  batch_size: 16
+  gradient_accumulation_steps: 2
+  learning_rate: 2.0e-4
+  weight_decay: 0.01
+  warmup_ratio: 0.05
+  fp16: true
+  checkpoint_interval_steps: 100
+  early_stopping_patience: 5
+  output_dir: "outputs/checkpoints/stage1_iu_xray"
+
+loss_weights:
+  lambda_ce: 1.0
+  lambda_align: 0.2
+  lambda_exp: 0.3
+
+data:
+  image_size: 224
+  max_text_len: 256
+  train_split: 0.70
+  val_split: 0.10
+  test_split: 0.20
+
+model:
+  backbone: "microsoft/BiomedVLP-BioViL-T"
+  lora_r: 16
+  lora_alpha: 32

@@ -1,0 +1,26 @@
+# Ablation Experiment Config: Without Supervised Explainability Loss
+experiment_name: "ablation_no_exp_loss"
+stage: 2
+dataset_name: "iu_xray"
+seed: 42
+
+training:
+  epochs: 15
+  batch_size: 16
+  gradient_accumulation_steps: 2
+  learning_rate: 2.0e-4
+  output_dir: "outputs/checkpoints/ablation_no_exp_loss"
+
+loss_weights:
+  lambda_ce: 1.0
+  lambda_align: 0.2
+  lambda_exp: 0.0  # Disabled supervised explainability loss
+
+data:
+  image_size: 224
+  max_text_len: 256
+
+model:
+  backbone: "microsoft/BiomedVLP-BioViL-T"
+  lora_r: 16
+  lora_alpha: 32
