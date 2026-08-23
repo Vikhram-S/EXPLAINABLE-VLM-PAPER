@@ -7,14 +7,19 @@ import torch
 import numpy as np
 
 # Ensure src module is importable from anywhere
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
-if os.getcwd() not in sys.path:
-    sys.path.insert(0, os.getcwd())
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.abspath(os.path.join(FILE_DIR, ".."))
 
-from src.data.iu_xray import IUXrayDataModule
-from src.data.dataset import CHEXPERT_PATHOLOGIES
+for path in [PROJECT_ROOT, os.path.join(PROJECT_ROOT, "src"), os.getcwd()]:
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
+try:
+    from src.data.iu_xray import IUXrayDataModule
+    from src.data.dataset import CHEXPERT_PATHOLOGIES
+except ImportError:
+    from data.iu_xray import IUXrayDataModule
+    from data.dataset import CHEXPERT_PATHOLOGIES
 
 def run_data_sanity_check(num_samples: int = 4, output_path: str = "outputs/figures/data_sanity_check.png"):
     """
