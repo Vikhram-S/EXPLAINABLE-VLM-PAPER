@@ -65,8 +65,17 @@ def train_pipeline(config_path: str):
     img_size = cfg["data"]["image_size"]
     max_text_len = cfg["data"]["max_text_len"]
 
+    try:
+        from transformers import AutoTokenizer
+        tokenizer = AutoTokenizer.from_pretrained("distilgpt2")
+        if tokenizer.pad_token is None:
+            tokenizer.pad_token = tokenizer.eos_token
+    except Exception:
+        tokenizer = None
+
     if dataset_name == "iu_xray":
         dm = IUXrayDataModule(
+            tokenizer=tokenizer,
             batch_size=batch_size,
             image_size=img_size,
             max_text_len=max_text_len,
@@ -74,6 +83,7 @@ def train_pipeline(config_path: str):
         )
     else:
         dm = MIMICCXRDataModule(
+            tokenizer=tokenizer,
             subsample_size=cfg["data"].get("subsample_size", 30000),
             batch_size=batch_size,
             image_size=img_size,
