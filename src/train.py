@@ -92,8 +92,8 @@ def train_pipeline(config_path: str):
         )
 
     train_ds, val_ds, test_ds = dm.setup()
-    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, drop_last=True)
-    val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, drop_last=True, num_workers=2, pin_memory=True)
+    val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
 
     loss_cfg = cfg.get("loss_weights", {})
     model = ExplainableVLMRad(
@@ -190,6 +190,9 @@ def train_pipeline(config_path: str):
             total_align_loss += outputs["loss_align"].item()
             total_exp_loss += outputs["loss_exp"].item()
 
+            if step % 10 == 0:
+                print(f"  Epoch {epoch} | Step {step}/{len(train_loader)} | Loss: {loss.item() * grad_accum_steps:.4f}", flush=True)
+
             if global_step > 0 and global_step % cfg["training"].get("checkpoint_interval_steps", 200) == 0:
                 ckpt_path = os.path.join(output_dir, f"ckpt_step_{global_step}.pt")
                 torch.save({
@@ -211,7 +214,7 @@ def train_pipeline(config_path: str):
             for val_batch in val_loader:
                 v_images = val_batch["image"].to(device)
                 v_refs = val_batch["report_text"]
-                v_gen = model.generate_report(v_images, max_new_tokens=128)
+                v_gen = model.generate_report(v_images, max_new_tokens=64)
                 val_refs.extend(v_refs)
                 val_hyps.extend(v_gen)
 

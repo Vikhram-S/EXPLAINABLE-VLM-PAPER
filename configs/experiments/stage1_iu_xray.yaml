@@ -5,15 +5,15 @@ dataset_name: "iu_xray"
 seed: 42
 
 training:
-  epochs: 15
+  epochs: 5
   batch_size: 16
   gradient_accumulation_steps: 2
   learning_rate: 2.0e-4
   weight_decay: 0.01
   warmup_ratio: 0.05
   fp16: true
-  checkpoint_interval_steps: 100
-  early_stopping_patience: 5
+  checkpoint_interval_steps: 50
+  early_stopping_patience: 3
   output_dir: "outputs/checkpoints/stage1_iu_xray"
 
 loss_weights:
@@ -23,7 +23,7 @@ loss_weights:
 
 data:
   image_size: 224
-  max_text_len: 256
+  max_text_len: 128
   train_split: 0.70
   val_split: 0.10
   test_split: 0.20
