@@ -6,7 +6,7 @@ import matplotlib.patches as patches
 import torch
 import numpy as np
 
-# Ensure src module is importable from anywhere
+# Ensure project root and src directory are in sys.path
 FILE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(FILE_DIR, ".."))
 
@@ -17,9 +17,10 @@ for path in [PROJECT_ROOT, os.path.join(PROJECT_ROOT, "src"), os.getcwd()]:
 try:
     from src.data.iu_xray import IUXrayDataModule
     from src.data.dataset import CHEXPERT_PATHOLOGIES
-except ImportError:
-    from data.iu_xray import IUXrayDataModule
-    from data.dataset import CHEXPERT_PATHOLOGIES
+except Exception as err:
+    print(f"\n❌ [CRITICAL IMPORT ERROR]: {err}")
+    print("💡 Please make sure dependencies are installed: `pip install -r requirements.txt`\n")
+    raise err
 
 def run_data_sanity_check(num_samples: int = 4, output_path: str = "outputs/figures/data_sanity_check.png"):
     """
