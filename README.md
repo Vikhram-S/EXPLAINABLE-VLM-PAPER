@@ -50,8 +50,8 @@ explainablevlm-rad/
 
 ### 1. Environment Setup
 ```bash
-git clone https://github.com/explainablevlm-rad/explainablevlm-rad.git
-cd explainablevlm-rad
+git clone https://github.com/Vikhram-S/EXPLAINABLE-VLM-PAPER.git
+cd EXPLAINABLE-VLM-PAPER
 
 # Option A: Conda
 conda env create -f environment.yml
