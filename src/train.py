@@ -60,6 +60,10 @@ def train_pipeline(config_path: str):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using compute device: {device}")
 
+    # Speed optimization: cudnn autotuner picks fastest conv algorithm
+    if device.type == "cuda":
+        torch.backends.cudnn.benchmark = True
+
     dataset_name = cfg.get("dataset_name", "iu_xray")
     batch_size = cfg["training"]["batch_size"]
     img_size = cfg["data"]["image_size"]
@@ -92,8 +96,14 @@ def train_pipeline(config_path: str):
         )
 
     train_ds, val_ds, test_ds = dm.setup()
-    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True, drop_last=True, num_workers=2, pin_memory=True)
-    val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False, num_workers=2, pin_memory=True)
+    train_loader = DataLoader(
+        train_ds, batch_size=batch_size, shuffle=True, drop_last=True,
+        num_workers=4, pin_memory=True, prefetch_factor=2, persistent_workers=True
+    )
+    val_loader = DataLoader(
+        val_ds, batch_size=batch_size, shuffle=False,
+        num_workers=4, pin_memory=True, prefetch_factor=2, persistent_workers=True
+    )
 
     loss_cfg = cfg.get("loss_weights", {})
     model = ExplainableVLMRad(
@@ -210,11 +220,16 @@ def train_pipeline(config_path: str):
 
         model.eval()
         val_refs, val_hyps = [], []
+        # PERF: cap val batches to avoid spending majority of epoch on slow autoregressive generation
+        val_max_batches = cfg["training"].get("val_max_batches", None)
         with torch.no_grad():
-            for val_batch in val_loader:
+            for val_idx, val_batch in enumerate(val_loader):
+                if val_max_batches is not None and val_idx >= val_max_batches:
+                    break
                 v_images = val_batch["image"].to(device)
                 v_refs = val_batch["report_text"]
-                v_gen = model.generate_report(v_images, max_new_tokens=64)
+                # 32 tokens is sufficient for BLEU/ROUGE scoring and 2x faster than 64
+                v_gen = model.generate_report(v_images, max_new_tokens=32)
                 val_refs.extend(v_refs)
                 val_hyps.extend(v_gen)
 

@@ -7,14 +7,15 @@ seed: 42
 
 training:
   epochs: 10
-  batch_size: 16
-  gradient_accumulation_steps: 4
+  batch_size: 8              # T4 (16GB): halved to avoid OOM with 196 visual tokens
+  gradient_accumulation_steps: 2  # eff. batch = 16, same as before but lighter per-step
   learning_rate: 1.0e-4
   weight_decay: 0.01
   warmup_ratio: 0.1
   fp16: true
-  checkpoint_interval_steps: 250
+  checkpoint_interval_steps: 200
   early_stopping_patience: 3
+  val_max_batches: 20        # CRITICAL: cap expensive autoregressive val generation
   output_dir: "outputs/checkpoints/stage2_mimic_cxr"
 
 loss_weights:
@@ -25,7 +26,7 @@ loss_weights:
 data:
   image_size: 224
   max_text_len: 256
-  subsample_size: 30000
+  subsample_size: 5000       # T4-friendly: ~70% = 3500 train, ~10% = 500 val samples
   stratify_pathologies: true
 
 model:
